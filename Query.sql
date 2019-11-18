@@ -61,18 +61,19 @@ WHERE Quantity BETWEEN 3 AND 10
 --запроса попадает Germany. Запрос должен высвечивать только колонки CustomerID и Country и отсортирован по Country.
 SELECT CustomerID, Country
 FROM Customers
-WHERE SUBSTRING(Country, 1, 1) BETWEEN 'b' AND 'g'
+WHERE SUBSTRING(Country, 1, 1) BETWEEN 'B' AND 'G'
 ORDER BY Country
 
 --3.3 Выбрать всех заказчиков из таблицы Customers, у которых название страны начинается на буквы из диапазона b и g, не используя оператор BETWEEN. С помощью опции “Execution Plan”
 --определить какой запрос предпочтительнее 3.2 или 3.3 – для этого надо ввести в скрипт выполнение текстового Execution Plan-a для двух этих запросов, результаты выполнения Execution 
 --Plan надо ввести в скрипт в виде комментария и по их результатам дать ответ на вопрос – по какому параметру было проведено сравнение. Запрос должен высвечивать только колонки 
 --CustomerID и Country и отсортирован по Country. 
---TODO
 SELECT CustomerID, Country
 FROM Customers
-WHERE SUBSTRING(Country, 1, 1) > 'b' AND SUBSTRING(Country, 1, 1) < 'g'
+WHERE Country LIKE '[B-G]%'
 ORDER BY Country
+--Результат выполнения Execution Plan сохранен в файле Execution plan.xml
+--Заметной разница между запросом 3.2 и 3.3 не заметил
 
 --4.1 В таблице Products найти все продукты (колонка ProductName), где встречается подстрока 'chocolade'. Известно, что в подстроке 'chocolade' может быть изменена одна буква 'c' в 
 --середине - найти все продукты, которые удовлетворяют этому условию. Подсказка: результаты запроса должны высвечивать 2 строки. 
@@ -264,8 +265,13 @@ EXEC ShippedOrdersDiff @DAY = 7
 --используется EmployeeID. Необходимо распечатать имена подчиненных и выровнять их в тексте (использовать оператор PRINT) согласно иерархии подчинения. Продавец, для которого надо
 --найти подчиненных также должен быть высвечен. Название процедуры SubordinationInfo. В качестве алгоритма для решения этой задачи надо использовать пример, приведенный в Books 
 --Online и рекомендованный Microsoft для решения подобного типа задач. Продемонстрировать использование процедуры.
+EXEC SubordinationInfo @EmployeeID = 2;
 
-
-
-
-
+--13.4 Написать функцию, которая определяет, есть ли у продавца подчиненные. Возвращает тип данных BIT. В качестве входного параметра функции используется EmployeeID. Название функции IsBoss.
+-- Продемонстрировать использование функции для всех продавцов из таблицы Employees.
+SELECT e.FirstName + ' ' + e.LastName AS 'Employee',
+CASE WHEN dbo.IsBoss(e.EmployeeID) = 1
+THEN 'True'
+ELSE 'False'
+END AS IsBoss
+FROM Employees AS e;
